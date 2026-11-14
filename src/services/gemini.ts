@@ -262,19 +262,19 @@ const PERSONA_CONFIG: Record<
   { model: string; systemInstruction: string }
 > = {
   'career-coach': {
-    model: 'gemini-4-hydrogen',
+    model: 'gemini-3.1-flash-lite',
     systemInstruction:
       'You are an encouraging, practical Career Coach helping students, freshers, and engineers refine their resumes and prepare for technical job applications. Give structured, concise advice grounded strictly in the user resume context when provided. Never fabricate experience or guarantees.',
   },
   'ats-reviewer': {
-    model: 'gemini-4-hydrogen',
+    model: 'gemini-3.1-flash-lite',
     systemInstruction:
       'You are a strict ATS & Technical Recruiter Reviewer. Evaluate wording, keyword alignment, section clarity, and impact without inventing metrics. Remind the user to verify any suggested rewrites against their real work.',
   },
   'quick-editor': {
     model: 'gemini-3.1-flash-lite',
     systemInstruction:
-      'You are a fast, crisp Resume Bullet Editor. Give short, high-impact plain-text bullet rewrites and quick phrasing alternatives in seconds while keeping all facts strictly accurate.',
+      'You are a fast, crisp Resume Bullet Editor. Give short, high-impact plain-text bullet rewrites and quick phrasing alternatives while keeping all facts strictly accurate.',
   },
 };
 
@@ -296,7 +296,7 @@ export async function sendChatTurn(params: {
     config: {
       systemInstruction,
     },
-    history: params.history.slice(-16).map((item) => ({
+    history: params.history.slice(-8).map((item) => ({
       role: item.role,
       parts: [{ text: item.content }],
     })),

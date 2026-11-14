@@ -1,28 +1,60 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import * as schema from './schema.ts';
+import { MongoClient } from 'mongodb';
+import type { Db } from 'mongodb';
 
 declare global {
-  var _postgresPool: Pool | undefined;
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
+  var _mongoIndexPromise: Promise<void> | undefined;
 }
 
-export const createPool = () => {
-  if (!global._postgresPool) {
-    global._postgresPool = new Pool({
-      host: process.env.SQL_HOST,
-      user: process.env.SQL_USER,
-      password: process.env.SQL_PASSWORD,
-      database: process.env.SQL_DB_NAME,
-      max: 10,
-      connectionTimeoutMillis: 15000,
-    });
+export async function getDatabase(): Promise<Db> {
+  const uri = process.env.MONGODB_URI;
+  const databaseName = process.env.MONGODB_DB_NAME;
 
-    global._postgresPool.on('error', (err) => {
-      console.error('Unexpected error on idle SQL pool client:', err);
+  if (!uri) {
+    throw new Error('MONGODB_URI must be set in environment variables.');
+  }
+  if (!databaseName) {
+    throw new Error('MONGODB_DB_NAME must be set in environment variables.');
+  }
+
+  if (!global._mongoClientPromise) {
+    const client = new MongoClient(uri, { serverSelectionTimeoutMS: 10000 });
+    global._mongoClientPromise = client.connect();
+  }
+
+  try {
+    const client = await global._mongoClientPromise;
+    const database = client.db(databaseName);
+
+    if (!global._mongoIndexPromise) {
+      global._mongoIndexPromise = Promise.all([
+        database.collection('users').createIndex({ email: 1 }, { unique: true }),
+        database.collection('sessions').createIndex(
+          { tokenHash: 1 },
+          { unique: true }
+        ),
+        database.collection('sessions').createIndex(
+          { expiresAt: 1 },
+          { expireAfterSeconds: 0 }
+        ),
+        database.collection('resumes').createIndex({
+          userId: 1,
+          updatedAt: -1,
+        }),
+        database.collection('chatMessages').createIndex({
+          userId: 1,
+          createdAt: 1,
+        }),
+      ]).then(() => undefined);
+    }
+
+    await global._mongoIndexPromise;
+    return database;
+  } catch (error) {
+    global._mongoClientPromise = undefined;
+    global._mongoIndexPromise = undefined;
+    throw new Error('Unable to connect to or initialize MongoDB.', {
+      cause: error,
     });
   }
-  return global._postgresPool;
-};
-
-const pool = createPool();
-export const db = drizzle(pool, { schema });
+}

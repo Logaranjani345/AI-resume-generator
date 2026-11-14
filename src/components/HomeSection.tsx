@@ -1,12 +1,21 @@
 import React from 'react';
 import {
   ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
+  Bot,
+  CheckCircle2,
+  Download,
+  Eye,
   FileCheck2,
   FileText,
-  Layers,
+  Layers3,
   Plus,
+  SearchCheck,
   Sparkles,
+  Target,
   Trash2,
+  WandSparkles,
 } from 'lucide-react';
 import type { ResumeData, SectionKey } from '../types/resume';
 
@@ -15,13 +24,52 @@ interface HomeSectionProps {
   onLoadSample: () => void;
   onCreateNew: () => void;
   savedResumes: ResumeData[];
-  activeResumeId?: number;
+  activeResumeId?: string;
   onSelectSavedResume: (resume: ResumeData) => void;
-  onDeleteSavedResume: (id: number) => void;
+  onDeleteSavedResume: (id: string) => void;
   isSignedIn: boolean;
   onSignIn: () => void;
   loadingResumes: boolean;
 }
+
+const FEATURES = [
+  {
+    icon: WandSparkles,
+    title: 'AI-powered writing',
+    description:
+      'Turn your real experience into clear, confident resume language.',
+  },
+  {
+    icon: SearchCheck,
+    title: 'ATS-ready by design',
+    description:
+      'Compare your resume with a role and find relevant keywords to review.',
+  },
+  {
+    icon: Layers3,
+    title: 'Professional templates',
+    description:
+      'Choose a polished layout that keeps your experience easy to scan.',
+  },
+  {
+    icon: Bot,
+    title: 'Personal AI assistant',
+    description:
+      'Get thoughtful suggestions while keeping your story true to you.',
+  },
+  {
+    icon: Eye,
+    title: 'Live resume preview',
+    description:
+      'See your changes take shape instantly across three distinct styles.',
+  },
+  {
+    icon: Download,
+    title: 'Ready-to-share PDF',
+    description:
+      'Export a clean, selectable-text resume for your next application.',
+  },
+];
 
 export function HomeSection({
   onNavigate,
@@ -36,131 +84,243 @@ export function HomeSection({
   loadingResumes,
 }: HomeSectionProps) {
   return (
-    <div className="space-y-12">
-      {/* Hero Banner */}
-      <section className="rounded-xl border border-slate-200 bg-white p-8 md:p-12">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-          <div className="space-y-6 lg:col-span-7">
-            <p className="text-xs font-medium tracking-wide text-sky-700">
-              ATS-Ready Resume Studio · Gemini Writing Assistant
+    <div className="space-y-16 pb-8">
+      <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-slate-900 px-6 py-10 shadow-2xl shadow-black/20 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
+        <div className="hero-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
+        <div className="pointer-events-none absolute -right-28 -top-32 -z-10 h-96 w-96 rounded-full bg-sky-600/10 blur-3xl" />
+
+        <div className="grid items-center gap-12 lg:grid-cols-[1.03fr_0.97fr] lg:gap-8">
+          <div className="max-w-2xl">
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-600/30 bg-sky-600/10 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.16em] text-sky-600">
+              <Sparkles className="h-3.5 w-3.5" />
+              AI-POWERED RESUME BUILDER
             </p>
-            <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.65rem] lg:leading-[1.15] [text-wrap:balance]">
-              Build clear, truthful, ATS-friendly resumes in minutes.
+            <h1 className="font-display text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.7rem]">
+              Build a resume that{' '}
+              <span className="text-sky-600">gets you noticed.</span>
             </h1>
-            <p className="max-w-2xl text-base leading-relaxed text-slate-600">
-              Designed for engineering students, freshers, and experienced
-              professionals. Organize your education, projects, and work
-              experience, refine phrasing with Gemini AI without fabricating
-              facts, compare against any job description, and export a
-              selectable-text PDF.
+            <p className="mt-6 max-w-xl text-base leading-7 text-slate-400 sm:text-lg">
+              Create a polished, ATS-friendly resume with thoughtful AI
+              assistance. Tell your story clearly, highlight what matters, and
+              stay in control of every detail.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => onNavigate('builder')}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-sky-700 whitespace-nowrap shrink-0"
+                className="group inline-flex min-h-12 items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-sky-600/10 hover:-translate-y-0.5 hover:bg-sky-700"
               >
-                Open Resume Builder
-                <ArrowRight className="h-4 w-4" />
+                Build My Resume
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
                 type="button"
-                onClick={onLoadSample}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 whitespace-nowrap shrink-0"
+                onClick={() => onNavigate('preview')}
+                className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-silver hover:border-sky-600/50 hover:bg-white/10"
               >
-                Load Sample Student Resume
+                Explore Templates
+                <ArrowUpRight className="h-4 w-4" />
               </button>
+            </div>
+            <button
+              type="button"
+              onClick={onLoadSample}
+              className="mt-4 text-xs font-medium text-slate-400 underline decoration-white/20 underline-offset-4 hover:text-sky-600"
+            >
+              Or explore with a sample resume
+            </button>
+
+            <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-6">
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <BadgeCheck className="h-4 w-4 text-sky-600" />
+                Factual AI suggestions
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <FileCheck2 className="h-4 w-4 text-sky-600" />
+                ATS-friendly export
+              </div>
             </div>
           </div>
 
-          {/* Right Editorial Summary Panel */}
-          <div className="rounded-xl border border-sky-100 bg-sky-50/60 p-6 lg:col-span-5">
-            <h2 className="font-display text-base font-semibold text-slate-900">
-              Built for Technical Placements
-            </h2>
-            <ul className="mt-4 space-y-3 text-sm text-slate-700">
-              <li className="flex items-start gap-2.5">
-                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-sky-700" />
-                <span>
-                  Structured sections for personal info, education, categorized
-                  skills, projects, internships, and certifications.
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-sky-700" />
-                <span>
-                  Gemini rewrites rough project notes into concise bullets while
-                  preserving your real metrics and stack.
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <FileCheck2 className="mt-0.5 h-4 w-4 shrink-0 text-sky-700" />
-                <span>
-                  Three clean templates with multi-page PDF export and clickable
-                  LinkedIn, GitHub, and email links.
-                </span>
-              </li>
-            </ul>
+          <div className="relative mx-auto w-full max-w-[490px] lg:justify-self-end">
+            <div className="hero-grid pointer-events-none absolute -inset-8 -z-10 rounded-[32px] opacity-60" />
+            <div className="hero-float overflow-hidden rounded-2xl border border-white/15 bg-slate-900 shadow-2xl shadow-black/40">
+              <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-silver/50" />
+                <span className="h-2.5 w-2.5 rounded-full bg-silver/50" />
+                <span className="h-2.5 w-2.5 rounded-full bg-silver/50" />
+                <div className="ml-3 flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-1 text-[10px] text-slate-400">
+                  resumestudio.app / preview
+                </div>
+              </div>
+              <div className="p-4 sm:p-6">
+                <div className="resume-mockup rounded-xl bg-white p-5 shadow-xl sm:p-7">
+                  <div className="flex items-start justify-between gap-4 border-b border-silver/60 pb-4">
+                    <div>
+                      <p className="text-[9px] font-bold tracking-[0.18em] text-silver">
+                        SOFTWARE ENGINEER
+                      </p>
+                      <h2 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
+                        Alex Morgan
+                      </h2>
+                      <p className="mt-1 text-[10px] text-silver">
+                        San Francisco, CA · alex.morgan@email.com
+                      </p>
+                    </div>
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-600/15">
+                      <FileText className="h-4 w-4 text-sky-600" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_0.72fr] gap-5 pt-4">
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="mb-2 text-[9px] font-bold tracking-[0.16em]">
+                          EXPERIENCE
+                        </h3>
+                        <p className="text-[10px] font-semibold">
+                          Product Engineer
+                        </p>
+                        <p className="mt-0.5 text-[8px] text-silver">
+                          Northstar Labs · 2022 — Present
+                        </p>
+                        <div className="mt-2 space-y-1.5">
+                          <span className="block h-1.5 w-full rounded bg-silver/45" />
+                          <span className="block h-1.5 w-[94%] rounded bg-silver/45" />
+                          <span className="block h-1.5 w-[80%] rounded bg-silver/45" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="mb-2 text-[9px] font-bold tracking-[0.16em]">
+                          SELECTED PROJECT
+                        </h3>
+                        <p className="text-[10px] font-semibold">
+                          Customer Insights Platform
+                        </p>
+                        <div className="mt-2 space-y-1.5">
+                          <span className="block h-1.5 w-full rounded bg-silver/45" />
+                          <span className="block h-1.5 w-[86%] rounded bg-silver/45" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="mb-2 text-[9px] font-bold tracking-[0.16em]">
+                          EXPERTISE
+                        </h3>
+                        <div className="flex flex-wrap gap-1">
+                          {['React', 'TypeScript', 'Node.js', 'SQL'].map(
+                            (skill) => (
+                              <span
+                                key={skill}
+                                className="rounded bg-silver/30 px-1.5 py-1 text-[8px]"
+                              >
+                                {skill}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="mb-2 text-[9px] font-bold tracking-[0.16em]">
+                          EDUCATION
+                        </h3>
+                        <p className="text-[9px] font-semibold">
+                          B.S. Computer Science
+                        </p>
+                        <p className="mt-0.5 text-[8px] text-silver">
+                          Pacific University
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-5 flex items-center justify-between border-t border-silver/60 pt-3">
+                    <span className="text-[8px] font-medium tracking-wide text-silver">
+                      PROFESSIONAL · ATS-READY
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-sky-600/15 px-2 py-1 text-[8px] font-bold text-sky-600">
+                      <CheckCircle2 className="h-2.5 w-2.5" />
+                      Live preview
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -bottom-4 -left-3 hidden items-center gap-2 rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 shadow-xl sm:flex">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600/15">
+                <Sparkles className="h-4 w-4 text-sky-600" />
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold text-white">
+                  AI-assisted
+                </p>
+                <p className="text-[9px] text-slate-400">Your story, refined</p>
+              </div>
+            </div>
+            <div className="absolute -right-3 top-14 hidden items-center gap-2 rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 shadow-xl sm:flex">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600/15">
+                <Target className="h-4 w-4 text-sky-600" />
+              </div>
+              <p className="text-[10px] font-semibold text-white">
+                ATS-ready format
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Core Workflow Overview */}
-      <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="flex items-center gap-2.5 text-sky-700">
-            <Layers className="h-5 w-5" />
-            <h3 className="font-display text-base font-semibold text-slate-900">
-              01. Structured Input
-            </h3>
-          </div>
-          <p className="mt-2.5 text-sm leading-relaxed text-slate-600">
-            Add multiple education records, categorized technical skills,
-            GitHub-linked projects, work history, and certifications in one
-            clean workspace.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="flex items-center gap-2.5 text-sky-700">
-            <Sparkles className="h-5 w-5" />
-            <h3 className="font-display text-base font-semibold text-slate-900">
-              02. ATS & AI Review
-            </h3>
-          </div>
-          <p className="mt-2.5 text-sm leading-relaxed text-slate-600">
-            Paste a target job description to uncover matching skills, missing
-            keywords, and phrasing improvements—plus ask our multi-turn Gemini
-            assistant anytime.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <div className="flex items-center gap-2.5 text-sky-700">
-            <FileCheck2 className="h-5 w-5" />
-            <h3 className="font-display text-base font-semibold text-slate-900">
-              03. Live Preview & PDF
-            </h3>
-          </div>
-          <p className="mt-2.5 text-sm leading-relaxed text-slate-600">
-            Switch between Executive, Modern, and Academic layouts in real time
-            and download a selectable-text PDF ready for job portals.
-          </p>
-        </div>
-      </section>
-
-      {/* Cloud SQL Saved Resumes */}
-      <section className="rounded-xl border border-slate-200 bg-white p-6 md:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <section className="space-y-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="font-display text-lg font-semibold text-slate-900">
+            <p className="text-xs font-bold tracking-[0.16em] text-sky-600">
+              EVERYTHING YOU NEED
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              From first draft to final export.
+            </h2>
+          </div>
+          <p className="max-w-md text-sm leading-6 text-slate-400">
+            A focused toolkit to help you create, refine, and share your next
+            opportunity-ready resume.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map(({ icon: Icon, title, description }, index) => (
+            <article
+              key={title}
+              className="group rounded-2xl border border-white/10 bg-slate-900 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-sky-600/50 hover:bg-slate-900/80 sm:p-6"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-600/20 bg-sky-600/10 text-sky-600 transition-colors group-hover:bg-sky-600 group-hover:text-slate-900">
+                <Icon className="h-5 w-5" />
+              </div>
+              <p className="mt-5 text-[10px] font-bold tracking-[0.14em] text-slate-400">
+                0{index + 1}
+              </p>
+              <h3 className="mt-1 font-display text-base font-semibold text-white">
+                {title}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                {description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-slate-900 p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-5 border-b border-white/10 pb-5">
+          <div>
+            <p className="text-xs font-bold tracking-[0.16em] text-sky-600">
+              YOUR WORKSPACE
+            </p>
+            <h2 className="mt-2 font-display text-xl font-semibold text-white sm:text-2xl">
               Your Saved Resumes
             </h2>
-            <p className="mt-0.5 text-sm text-slate-500">
+            <p className="mt-1.5 text-sm text-slate-400">
               {isSignedIn
-                ? 'Synced securely to your PostgreSQL workspace.'
-                : 'Sign in with Google to save, load, and manage multiple resumes across sessions.'}
+                ? 'Your resumes are synced securely to your account.'
+                : 'Sign in to save and manage your resumes across sessions.'}
             </p>
           </div>
 
@@ -168,77 +328,78 @@ export function HomeSection({
             <button
               type="button"
               onClick={onCreateNew}
-              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-3.5 py-2 text-xs font-semibold text-sky-800 transition-colors hover:bg-sky-100 whitespace-nowrap shrink-0"
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white hover:border-sky-600/50 hover:bg-white/10"
             >
-              <Plus className="h-4 w-4" />
-              New Blank Resume
+              <Plus className="h-4 w-4 text-sky-600" />
+              New Resume
             </button>
           ) : (
             <button
               type="button"
               onClick={onSignIn}
-              className="inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-800 whitespace-nowrap shrink-0"
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-sky-600 px-4 py-2 text-xs font-bold text-slate-900 hover:bg-sky-700"
             >
-              Sign in with Google
+              Sign in to save resumes
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
 
         {isSignedIn && (
-          <div className="mt-5">
+          <div className="pt-5">
             {loadingResumes ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {[1, 2, 3].map((item) => (
                   <div
                     key={item}
-                    className="h-28 animate-pulse rounded-lg border border-slate-200 bg-slate-50"
+                    className="h-28 animate-pulse rounded-xl border border-white/10 bg-white/5"
                   />
                 ))}
               </div>
             ) : savedResumes.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/70 p-6 text-center">
-                <p className="text-sm text-slate-600">
-                  No resumes saved yet. Build your first resume in the Builder
-                  and click <strong>Save Resume</strong>.
+              <div className="rounded-xl border border-dashed border-white/20 bg-white/[0.03] p-7 text-center">
+                <FileText className="mx-auto h-6 w-6 text-sky-600" />
+                <p className="mt-3 text-sm text-slate-400">
+                  No resumes saved yet. Start building and save your first
+                  resume here.
                 </p>
                 <button
                   type="button"
                   onClick={() => onNavigate('builder')}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-4 py-2 text-xs font-semibold text-white hover:bg-sky-700"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-2 text-xs font-bold text-slate-900 hover:bg-sky-700"
                 >
-                  Start First Resume
+                  Open Resume Builder
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {savedResumes.map((item) => {
                   const isActive = item.id === activeResumeId;
                   return (
-                    <div
+                    <article
                       key={item.id}
-                      className={`flex flex-col justify-between rounded-lg border p-4 transition-colors ${
+                      className={`flex flex-col justify-between rounded-xl border p-4 transition-colors ${
                         isActive
-                          ? 'border-sky-500 bg-sky-50/50'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
+                          ? 'border-sky-600 bg-sky-600/10'
+                          : 'border-white/10 bg-white/[0.03] hover:border-white/20'
                       }`}
                     >
                       <div>
-                        <h3 className="font-display text-sm font-semibold text-slate-900 truncate">
+                        <h3 className="truncate font-display text-sm font-semibold text-white">
                           {item.title || 'Untitled Resume'}
                         </h3>
-                        <p className="mt-1 text-xs text-slate-500 truncate">
-                          {[
-                            item.targetRole || 'No target role',
-                            item.template,
-                          ].join(' · ')}
+                        <p className="mt-1 truncate text-xs text-slate-400">
+                          {[item.targetRole || 'No target role', item.template]
+                            .filter(Boolean)
+                            .join(' · ')}
                         </p>
                       </div>
-
-                      <div className="mt-4 flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                      <div className="mt-4 flex items-center justify-between gap-2 border-t border-white/10 pt-3">
                         <button
                           type="button"
                           onClick={() => onSelectSavedResume(item)}
-                          className="text-xs font-semibold text-sky-700 hover:text-sky-900"
+                          className="text-xs font-semibold text-sky-600 hover:text-white"
                         >
                           {isActive ? 'Currently Loaded' : 'Load & Edit'}
                         </button>
@@ -247,13 +408,13 @@ export function HomeSection({
                             type="button"
                             onClick={() => onDeleteSavedResume(item.id!)}
                             aria-label={`Delete ${item.title}`}
-                            className="rounded p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-sky-600"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         )}
                       </div>
-                    </div>
+                    </article>
                   );
                 })}
               </div>

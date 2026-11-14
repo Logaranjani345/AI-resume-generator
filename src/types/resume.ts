@@ -49,7 +49,7 @@ export interface CertificationItem {
 }
 
 export interface ResumeData {
-  id?: number;
+  id?: string;
   title: string;
   template: ResumeTemplateId;
   fullName: string;
@@ -81,7 +81,7 @@ export interface AtsAnalysisResult {
 }
 
 export interface ChatMessageItem {
-  id?: number;
+  id?: string;
   role: 'user' | 'model';
   persona: ChatPersonaId;
   modelUsed: string;

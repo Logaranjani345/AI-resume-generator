@@ -200,7 +200,7 @@ export function PreviewSection({
                 onClick={() => onSelectTemplate(tpl.id)}
                 className={`min-h-[38px] rounded-lg border px-3 py-1.5 text-left text-xs transition-colors whitespace-nowrap shrink-0 ${
                   active
-                    ? 'border-sky-600 bg-sky-50 font-semibold text-sky-900'
+                    ? 'border-sky-600 bg-sky-600 font-semibold text-slate-900'
                     : 'border-slate-200 bg-white font-medium text-slate-700 hover:bg-slate-50'
                 }`}
                 title={tpl.subtitle}
@@ -640,7 +640,7 @@ export function PreviewSection({
                         }
                         className={`rounded-lg border p-3 text-left transition-colors ${
                           selected
-                            ? 'border-sky-600 bg-sky-50 text-sky-950'
+                            ? 'border-sky-600 bg-sky-600 text-slate-900'
                             : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
                       >
@@ -676,7 +676,7 @@ export function PreviewSection({
                 type="button"
                 disabled={exportingPdf}
                 onClick={handleApplyToPreview}
-                className="inline-flex min-h-[40px] items-center rounded-lg border border-sky-200 bg-sky-50 px-3.5 py-2 text-xs font-semibold text-sky-800 hover:bg-sky-100 disabled:opacity-50"
+                className="inline-flex min-h-[40px] items-center rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-100 disabled:opacity-50"
               >
                 Apply to Preview
               </button>

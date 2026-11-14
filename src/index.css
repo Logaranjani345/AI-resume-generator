@@ -1,7 +1,67 @@
 @import "tailwindcss";
 
+@theme {
+  --color-charcoal-gray: #2B2D31;
+  --color-silver: #D9DADC;
+  --color-golden-yellow: #FFC93C;
+  --color-white: #FFFFFF;
+  --color-charcoal: #2B2D31;
+  --color-gold: #FFC93C;
+
+  --color-sky-50: #2B2D31;
+  --color-sky-100: #2B2D31;
+  --color-sky-200: #D9DADC;
+  --color-sky-300: #D9DADC;
+  --color-sky-400: #FFC93C;
+  --color-sky-500: #FFC93C;
+  --color-sky-600: #FFC93C;
+  --color-sky-700: #FFC93C;
+  --color-sky-800: #FFFFFF;
+  --color-sky-900: #FFFFFF;
+  --color-sky-950: #FFFFFF;
+
+  --color-slate-50: #2B2D31;
+  --color-slate-100: #2B2D31;
+  --color-slate-200: #D9DADC;
+  --color-slate-300: #D9DADC;
+  --color-slate-400: #D9DADC;
+  --color-slate-500: #D9DADC;
+  --color-slate-600: #D9DADC;
+  --color-slate-700: #D9DADC;
+  --color-slate-800: #FFFFFF;
+  --color-slate-900: #2B2D31;
+  --color-slate-950: #2B2D31;
+
+  --color-red-50: #2B2D31;
+  --color-red-100: #2B2D31;
+  --color-red-200: #D9DADC;
+  --color-red-300: #D9DADC;
+  --color-red-400: #FFC93C;
+  --color-red-500: #FFC93C;
+  --color-red-600: #FFC93C;
+  --color-red-700: #FFC93C;
+  --color-red-800: #FFC93C;
+  --color-red-900: #FFC93C;
+  --color-red-950: #FFC93C;
+}
+
 @layer base {
   :root {
+    --charcoal-gray: var(--color-charcoal-gray);
+    --silver: var(--color-silver);
+    --golden-yellow: var(--color-golden-yellow);
+    --white: var(--color-white);
+    --color-primary: var(--golden-yellow);
+    --color-primary-hover: var(--golden-yellow);
+    --color-primary-text: var(--charcoal-gray);
+    --color-bg-app: var(--charcoal-gray);
+    --color-bg-card: var(--charcoal-gray);
+    --color-bg-muted: var(--charcoal-gray);
+    --color-text-main: var(--white);
+    --color-text-muted: var(--silver);
+    --color-border-main: var(--silver);
+    --color-border-subtle: var(--silver);
+
     --font-display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
     --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -9,27 +69,190 @@
 
   html {
     font-family: var(--font-sans);
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--charcoal-gray);
+    color: var(--white);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, .font-display {
+  body {
+    min-width: 320px;
+    background-color: var(--charcoal-gray);
+    color: var(--white);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
     font-family: var(--font-display);
+    color: var(--white);
   }
 
   .font-mono {
     font-family: var(--font-mono);
   }
+
+  ::selection {
+    background-color: var(--golden-yellow);
+    color: var(--charcoal-gray);
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: 180ms;
+    transition-timing-function: ease;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--golden-yellow);
+    outline-offset: 2px;
+  }
+
+  button.bg-sky-600,
+  button.bg-sky-600.text-white,
+  button.bg-sky-600.text-slate-900,
+  a.bg-sky-600,
+  .bg-sky-600.text-white,
+  .bg-sky-600.text-slate-900 {
+    color: var(--charcoal-gray) !important;
+  }
+
+  button[aria-checked="true"],
+  button[aria-pressed="true"],
+  button[role="radio"][aria-checked="true"] {
+    background-color: var(--golden-yellow);
+    border-color: var(--golden-yellow);
+    color: var(--charcoal-gray);
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    background-color: var(--white) !important;
+    border-color: var(--silver);
+    color: var(--charcoal-gray) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--charcoal-gray);
+    opacity: 0.65;
+  }
+
+  .text-sky-400,
+  .text-sky-500,
+  .text-sky-600,
+  .text-sky-700,
+  .text-sky-800,
+  .text-sky-900,
+  .text-sky-950 {
+    color: var(--golden-yellow) !important;
+  }
+
+  .text-slate-400,
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-700 {
+    color: var(--silver) !important;
+  }
+
+  .text-slate-800,
+  .text-slate-900,
+  .text-slate-950 {
+    color: var(--white) !important;
+  }
+
+  .text-red-600,
+  .text-red-700,
+  .text-red-800 {
+    color: var(--golden-yellow) !important;
+  }
+
+  .text-emerald-600,
+  .text-emerald-700,
+  .text-amber-700 {
+    color: var(--golden-yellow) !important;
+  }
+
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
+body :where(button, div, section, article, aside, header, footer, nav).bg-white {
+  background-color: var(--charcoal-gray) !important;
+}
+
+body .resume-print-sheet.bg-white,
+body .resume-mockup.bg-white {
+  background-color: var(--white) !important;
+}
+
+body span.bg-white {
+  background-color: var(--white) !important;
+}
+
+body input:not([type="checkbox"]):not([type="radio"]),
+body select,
+body textarea {
+  background-color: var(--white) !important;
+  color: var(--charcoal-gray) !important;
+}
+
+.resume-mockup,
+.resume-mockup * {
+  color: var(--charcoal-gray) !important;
+}
+
+.resume-mockup .text-sky-600 {
+  color: var(--golden-yellow) !important;
+}
+
+.resume-print-sheet,
+.resume-print-sheet * {
+  color: var(--charcoal-gray) !important;
+}
+
+.resume-print-sheet a {
+  color: var(--charcoal-gray) !important;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(217, 218, 220, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 218, 220, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(90deg, transparent, black 50%, black);
+}
+
+.hero-float {
+  animation: hero-float 6s ease-in-out infinite;
+}
+
+@keyframes hero-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
