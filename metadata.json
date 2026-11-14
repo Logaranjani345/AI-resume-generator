@@ -1,0 +1,6 @@
+{
+  "name": "AI-Powered Resume Generator",
+  "description": "Step-by-step full-stack AI-Powered Resume Generator built with HTML, CSS, JavaScript, Python, Flask, SQLite, and Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

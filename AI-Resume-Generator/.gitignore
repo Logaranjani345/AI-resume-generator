@@ -1,0 +1,29 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database files (contains personal resume data)
+*.db
+*.sqlite
+*.sqlite3
+database/*.db
+
+# Generated private resume PDFs
+generated_resumes/*.pdf
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
