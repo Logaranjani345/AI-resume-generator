@@ -27,8 +27,8 @@ const TEMPLATES: Array<{
 }> = [
   {
     id: 'executive',
-    name: 'Executive Classic',
-    subtitle: 'Centered header · Crisp blue dividers',
+    name: 'Fawn Editorial',
+    subtitle: 'Cream paper · Deep brown · Baby-blue accents',
   },
   {
     id: 'modern',
@@ -268,6 +268,7 @@ export function PreviewSection({
       {/* Live ATS Resume Sheet */}
       <div
         data-margins={appliedOptions.margins}
+        data-template={resume.template}
         className={`resume-print-sheet mx-auto max-w-[850px] rounded-xl border border-slate-200 bg-white shadow-sm transition-all ${
           isCompactMargins ? 'p-5 md:p-7' : 'p-8 md:p-12'
         }`}
@@ -287,7 +288,11 @@ export function PreviewSection({
                   : 'border-slate-900 text-left'
             }`}
           >
-            <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+            <h1
+              className={`text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl ${
+                isExecutive ? 'font-serif' : ''
+              }`}
+            >
               {resume.fullName || 'Your Full Name'}
             </h1>
             {resume.targetRole && (

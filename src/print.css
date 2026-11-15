@@ -7,7 +7,7 @@
   html,
   body {
     background-color: #ffffff !important;
-    color: #2B2D31 !important;
+    color: #2B211C !important;
     font-size: 10pt;
     line-height: 1.4;
     margin: 0 !important;
@@ -38,6 +38,26 @@
     background-color: #ffffff !important;
   }
 
+  .resume-print-sheet[data-template='executive'] {
+    background-color: #F2E8DA !important;
+    border-color: transparent !important;
+  }
+
+  .resume-print-sheet[data-template='executive'] header,
+  .resume-print-sheet[data-template='executive'] h2 {
+    border-color: #8EC5FF !important;
+  }
+
+  .resume-print-sheet[data-template='executive'] h1,
+  .resume-print-sheet[data-template='executive'] h2,
+  .resume-print-sheet[data-template='executive'] h3,
+  .resume-print-sheet[data-template='executive'] p,
+  .resume-print-sheet[data-template='executive'] li,
+  .resume-print-sheet[data-template='executive'] a,
+  .resume-print-sheet[data-template='executive'] span {
+    color: #3B2418 !important;
+  }
+
   .resume-print-sheet article {
     gap: 0.75rem;
   }
@@ -52,7 +72,7 @@
   .resume-print-sheet h1 {
     font-size: 18pt !important;
     line-height: 1.15 !important;
-    color: #2B2D31 !important;
+    color: #2B211C !important;
   }
 
   .resume-print-sheet h2 {
@@ -91,7 +111,7 @@
   }
 
   .resume-print-sheet a {
-    color: #2B2D31 !important;
+    color: #2B211C !important;
     text-decoration: none !important;
   }
 

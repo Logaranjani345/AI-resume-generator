@@ -35,37 +35,37 @@ interface HomeSectionProps {
 const FEATURES = [
   {
     icon: WandSparkles,
-    title: 'AI-powered writing',
+    title: 'AI-Powered Resume Writing',
     description:
       'Turn your real experience into clear, confident resume language.',
   },
   {
     icon: SearchCheck,
-    title: 'ATS-ready by design',
+    title: 'ATS-Friendly Formatting',
     description:
       'Compare your resume with a role and find relevant keywords to review.',
   },
   {
     icon: Layers3,
-    title: 'Professional templates',
+    title: 'Professional Resume Templates',
     description:
       'Choose a polished layout that keeps your experience easy to scan.',
   },
   {
     icon: Bot,
-    title: 'Personal AI assistant',
+    title: 'AI Suggestions',
     description:
       'Get thoughtful suggestions while keeping your story true to you.',
   },
   {
     icon: Eye,
-    title: 'Live resume preview',
+    title: 'Live Resume Preview',
     description:
       'See your changes take shape instantly across three distinct styles.',
   },
   {
     icon: Download,
-    title: 'Ready-to-share PDF',
+    title: 'PDF Export',
     description:
       'Export a clean, selectable-text resume for your next application.',
   },
@@ -85,7 +85,7 @@ export function HomeSection({
 }: HomeSectionProps) {
   return (
     <div className="space-y-16 pb-8">
-      <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-slate-900 px-6 py-10 shadow-2xl shadow-black/20 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
+      <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-slate-900 px-6 py-10 shadow-xl shadow-[#3B2418]/5 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
         <div className="hero-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
         <div className="pointer-events-none absolute -right-28 -top-32 -z-10 h-96 w-96 rounded-full bg-sky-600/10 blur-3xl" />
 
@@ -96,13 +96,13 @@ export function HomeSection({
               AI-POWERED RESUME BUILDER
             </p>
             <h1 className="font-display text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.7rem]">
-              Build a resume that{' '}
-              <span className="text-sky-600">gets you noticed.</span>
+              Build a Resume That Opens{' '}
+              <span className="text-sky-600">New Opportunities.</span>
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-slate-400 sm:text-lg">
-              Create a polished, ATS-friendly resume with thoughtful AI
-              assistance. Tell your story clearly, highlight what matters, and
-              stay in control of every detail.
+              Create polished, ATS-friendly resumes with intelligent AI
+              assistance. Present your education, skills, projects, and
+              experience with confidence.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -111,7 +111,7 @@ export function HomeSection({
                 onClick={() => onNavigate('builder')}
                 className="group inline-flex min-h-12 items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-sky-600/10 hover:-translate-y-0.5 hover:bg-sky-700"
               >
-                Build My Resume
+                Create My Resume
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
@@ -145,12 +145,12 @@ export function HomeSection({
 
           <div className="relative mx-auto w-full max-w-[490px] lg:justify-self-end">
             <div className="hero-grid pointer-events-none absolute -inset-8 -z-10 rounded-[32px] opacity-60" />
-            <div className="hero-float overflow-hidden rounded-2xl border border-white/15 bg-slate-900 shadow-2xl shadow-black/40">
-              <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+            <div className="hero-float overflow-hidden rounded-2xl border border-white/15 bg-slate-900 shadow-2xl shadow-black/10">
+              <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3">
                 <span className="h-2.5 w-2.5 rounded-full bg-silver/50" />
                 <span className="h-2.5 w-2.5 rounded-full bg-silver/50" />
                 <span className="h-2.5 w-2.5 rounded-full bg-silver/50" />
-                <div className="ml-3 flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-1 text-[10px] text-slate-400">
+                <div className="ml-3 flex-1 rounded-md border border-slate-200 bg-white px-3 py-1 text-[10px] text-slate-400">
                   resumestudio.app / preview
                 </div>
               </div>
@@ -289,7 +289,7 @@ export function HomeSection({
           {FEATURES.map(({ icon: Icon, title, description }, index) => (
             <article
               key={title}
-              className="group rounded-2xl border border-white/10 bg-slate-900 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-sky-600/50 hover:bg-slate-900/80 sm:p-6"
+              className="group rounded-2xl border border-white/10 bg-slate-900 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-sky-600/50 hover:bg-slate-50 sm:p-6"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-600/20 bg-sky-600/10 text-sky-600 transition-colors group-hover:bg-sky-600 group-hover:text-slate-900">
                 <Icon className="h-5 w-5" />

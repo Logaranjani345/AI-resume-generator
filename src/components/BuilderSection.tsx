@@ -245,7 +245,7 @@ export function BuilderSection({
     { id: 'education', label: 'Education' },
     { id: 'skills', label: 'Skills' },
     { id: 'projects', label: 'Projects' },
-    { id: 'experience', label: 'Experience' },
+    { id: 'experience', label: 'Experience & Internships' },
     { id: 'certifications', label: 'Certifications' },
   ];
 
@@ -367,7 +367,7 @@ export function BuilderSection({
             <button
               type="button"
               onClick={onSignIn}
-              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-800 whitespace-nowrap shrink-0"
+              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-sky-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-sky-700 whitespace-nowrap shrink-0"
             >
               Sign in to Save
             </button>

@@ -40,13 +40,24 @@ export function buildResumePdfDocument(
   const lineHeightFactor = isCompact ? 1.28 : 1.4;
 
   const accentColor: [number, number, number] =
-    resume.template === 'modern'
-      ? [2, 132, 199]
-      : resume.template === 'academic'
-        ? [15, 23, 42]
-        : [3, 105, 161];
+    resume.template === 'executive'
+      ? [59, 36, 24]
+      : resume.template === 'modern'
+        ? [2, 132, 199]
+        : resume.template === 'academic'
+          ? [15, 23, 42]
+          : [3, 105, 161];
+  const textColor: [number, number, number] =
+    resume.template === 'executive' ? [59, 36, 24] : [15, 23, 42];
+  const bodyTextColor: [number, number, number] =
+    resume.template === 'executive' ? [74, 54, 39] : [30, 41, 59];
+  const mutedTextColor: [number, number, number] =
+    resume.template === 'executive' ? [103, 82, 66] : [71, 85, 105];
 
-  const primaryFont = resume.template === 'academic' ? 'times' : 'helvetica';
+  const primaryFont =
+    resume.template === 'academic' || resume.template === 'executive'
+      ? 'times'
+      : 'helvetica';
   let y = topMargin;
 
   const ensureSpace = (neededHeight: number) => {
@@ -64,18 +75,22 @@ export function buildResumePdfDocument(
     doc.setTextColor(...accentColor);
     doc.text(title.toUpperCase(), marginX, y);
     y += 5;
-    doc.setDrawColor(203, 213, 225);
+    doc.setDrawColor(
+      ...(resume.template === 'executive'
+        ? [142, 197, 255] as [number, number, number]
+        : [203, 213, 225] as [number, number, number])
+    );
     doc.setLineWidth(0.75);
     doc.line(marginX, y, pageWidth - marginX, y);
     y += headingBottomGap;
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(...textColor);
   };
 
   const addWrappedText = (
     text: string,
     fontSize = 9.5,
     fontStyle: 'normal' | 'bold' | 'italic' = 'normal',
-    color: [number, number, number] = [30, 41, 59],
+    color: [number, number, number] = bodyTextColor,
     indent = 0
   ) => {
     if (!text.trim()) return;
@@ -94,7 +109,7 @@ export function buildResumePdfDocument(
   // Header: Name & Target Role
   doc.setFont(primaryFont, 'bold');
   doc.setFontSize(20);
-  doc.setTextColor(15, 23, 42);
+  doc.setTextColor(...textColor);
   doc.text(resume.fullName || 'Your Name', marginX, y);
   y += 18;
 
@@ -141,10 +156,10 @@ export function buildResumePdfDocument(
         y += 13;
       }
       if (item.url) {
-        doc.setTextColor(2, 132, 199);
+        doc.setTextColor(...accentColor);
         doc.textWithLink(item.label, cursorX, y, { url: item.url });
       } else {
-        doc.setTextColor(71, 85, 105);
+        doc.setTextColor(...mutedTextColor);
         doc.text(item.label, cursorX, y);
       }
       cursorX += itemWidth;
@@ -177,7 +192,7 @@ export function buildResumePdfDocument(
       ensureSpace(32);
       doc.setFont(primaryFont, 'bold');
       doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(...textColor);
       const degreeLine = [edu.degree, edu.specialization]
         .filter(Boolean)
         .join(' — ');
@@ -186,7 +201,7 @@ export function buildResumePdfDocument(
       if (edu.graduationYear) {
         doc.setFont(primaryFont, 'normal');
         doc.setFontSize(9);
-        doc.setTextColor(71, 85, 105);
+        doc.setTextColor(...mutedTextColor);
         const yrW = doc.getTextWidth(edu.graduationYear);
         doc.text(edu.graduationYear, pageWidth - marginX - yrW, y);
       }
@@ -194,7 +209,7 @@ export function buildResumePdfDocument(
 
       const subLine = [edu.institution, edu.score].filter(Boolean).join('  ·  ');
       if (subLine) {
-        addWrappedText(subLine, 9, 'normal', [71, 85, 105]);
+        addWrappedText(subLine, 9, 'normal', mutedTextColor);
       }
       y += 4;
     }
@@ -236,14 +251,14 @@ export function buildResumePdfDocument(
       ensureSpace(36);
       doc.setFont(primaryFont, 'bold');
       doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(...textColor);
       const heading = [exp.jobTitle, exp.company].filter(Boolean).join(' — ');
       doc.text(heading, marginX, y);
 
       if (exp.duration) {
         doc.setFont(primaryFont, 'normal');
         doc.setFontSize(9);
-        doc.setTextColor(71, 85, 105);
+        doc.setTextColor(...mutedTextColor);
         const durW = doc.getTextWidth(exp.duration);
         doc.text(exp.duration, pageWidth - marginX - durW, y);
       }
@@ -259,7 +274,7 @@ export function buildResumePdfDocument(
           .filter(Boolean);
         for (const line of lines) {
           const bulletText = line.startsWith('-') || line.startsWith('•') ? line : `• ${line}`;
-          addWrappedText(bulletText, 9.2, 'normal', [30, 41, 59], 8);
+          addWrappedText(bulletText, 9.2, 'normal', bodyTextColor, 8);
         }
       }
       y += 5;
@@ -276,13 +291,13 @@ export function buildResumePdfDocument(
       ensureSpace(36);
       doc.setFont(primaryFont, 'bold');
       doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(...textColor);
       doc.text(proj.title || 'Project', marginX, y);
 
       if (options.includeSocialLinks && (proj.githubLink || '').trim()) {
         doc.setFont(primaryFont, 'normal');
         doc.setFontSize(8.5);
-        doc.setTextColor(2, 132, 199);
+        doc.setTextColor(...accentColor);
         const linkLabel = 'GitHub Repository';
         const linkW = doc.getTextWidth(linkLabel);
         doc.textWithLink(linkLabel, pageWidth - marginX - linkW, y, {
@@ -304,7 +319,7 @@ export function buildResumePdfDocument(
           .filter(Boolean);
         for (const line of lines) {
           const bulletText = line.startsWith('-') || line.startsWith('•') ? line : `• ${line}`;
-          addWrappedText(bulletText, 9.2, 'normal', [30, 41, 59], 8);
+          addWrappedText(bulletText, 9.2, 'normal', bodyTextColor, 8);
         }
       }
       y += 5;
@@ -326,7 +341,7 @@ export function buildResumePdfDocument(
       ]
         .filter(Boolean)
         .join(' · ');
-      addWrappedText(`• ${parts}`, 9.2, 'normal', [30, 41, 59], 4);
+      addWrappedText(`• ${parts}`, 9.2, 'normal', bodyTextColor, 4);
     }
   }
 
