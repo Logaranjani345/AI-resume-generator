@@ -51,28 +51,21 @@ export function Navigation({
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-primary-brown/10 bg-slate-950/95 backdrop-blur-xl">
-    <header className="no-print sticky top-0 z-40 border-b border-white/10 bg-slate-950/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-8 px-4 py-3.5 sm:px-6">
         <button
           type="button"
           onClick={() => handleNavClick('home')}
           className="flex shrink-0 cursor-pointer items-center gap-2.5 whitespace-nowrap font-display text-lg font-bold tracking-tight text-primary-brown"
-          className="flex shrink-0 cursor-pointer items-center gap-2.5 whitespace-nowrap font-display text-lg font-bold tracking-tight text-white"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600 text-slate-900">
             <span className="text-sm font-extrabold">R</span>
           </span>
-
           Resume<span className="-ml-2 text-sky-600">Studio</span>
-          <span>
-            Resume<span className="text-sky-600">Studio</span>
-          </span>
         </button>
 
         <nav
           aria-label="Main navigation"
           className="hidden items-center gap-1 rounded-xl border border-primary-brown/10 bg-white/70 p-1 md:flex"
-          className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1 md:flex"
         >
           {NAV_LINKS.map((link) => {
             const isActive = activeSection === link.id;
@@ -85,9 +78,7 @@ export function Navigation({
                 className={`relative cursor-pointer whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
                   isActive
                     ? 'bg-sky-600 text-slate-900'
-
                     : 'text-slate-700 hover:bg-secondary-cream hover:text-primary-brown'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white'
                 }`}
               >
                 {link.label}
@@ -103,10 +94,7 @@ export function Navigation({
               type="button"
               onClick={onSignOut}
               title={`Signed in as ${userEmail}`}
-
               className="inline-flex min-h-[38px] shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-primary-brown/15 bg-white px-3.5 py-1.5 text-xs font-semibold text-primary-brown transition-colors hover:border-sky-600/50 hover:bg-secondary-cream"
-              className="inline-flex min-h-[38px] shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:border-sky-600/50 hover:bg-white/10"
-
             >
               <span className="max-w-[140px] truncate hidden sm:inline">
                 {userEmail}
@@ -118,13 +106,9 @@ export function Navigation({
             <button
               type="button"
               onClick={onSignIn}
-
               className="inline-flex min-h-[38px] shrink-0 items-center whitespace-nowrap rounded-lg bg-sky-600 px-4 py-1.5 text-xs font-bold text-primary-brown hover:bg-sky-700"
-
-              className="inline-flex min-h-[38px] shrink-0 items-center whitespace-nowrap rounded-lg bg-sky-600 px-4 py-1.5 text-xs font-bold text-slate-900 hover:bg-sky-700"
-
             >
-              Sign In
+              Sign in
             </button>
           )}
 
@@ -133,11 +117,7 @@ export function Navigation({
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileMenuOpen}
-
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-primary-brown/15 text-primary-brown hover:bg-secondary-cream md:hidden"
-
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 text-silver hover:bg-white/5 md:hidden"
-
           >
             {mobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -151,11 +131,7 @@ export function Navigation({
       {mobileMenuOpen && (
         <nav
           aria-label="Mobile navigation"
-
           className="border-t border-primary-brown/10 bg-background-cream px-4 py-3 md:hidden"
-
-          className="border-t border-white/10 bg-slate-950 px-4 py-3 md:hidden"
-
         >
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => {
@@ -169,11 +145,7 @@ export function Navigation({
                   className={`flex min-h-[44px] items-center rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-sky-600 font-semibold text-slate-900'
-
                       : 'text-slate-700 hover:bg-secondary-cream hover:text-primary-brown'
-
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white'
-
                   }`}
                 >
                   {link.label}
@@ -408,11 +380,7 @@ function ResumeAppShell() {
   };
 
   return (
-
     <div className="flex min-h-screen flex-col bg-background-cream text-dark-text">
-
-    <div className="flex min-h-screen flex-col bg-slate-950 text-white">
-
       <Navigation
         activeSection={activeSection}
         onSelectSection={setActiveSection}
@@ -421,13 +389,9 @@ function ResumeAppShell() {
         onSignOut={handleSignOut}
       />
 
-      <main className="resume-print-main mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+      <main className="resume-print-main mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         {(authError || appError) && (
-
           <div className="mb-6 rounded-xl border border-secondary-cream bg-white px-4 py-3 text-sm text-primary-brown shadow-sm">
-
-          <div className="mb-6 rounded-xl border border-silver/30 bg-white/5 px-4 py-3 text-sm text-golden-yellow">
-
             {authError || appError}
           </div>
         )}
@@ -495,15 +459,9 @@ function ResumeAppShell() {
         )}
       </main>
 
-
       <footer className="no-print border-t border-primary-brown/10 bg-background-cream">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-5 text-xs text-slate-600 sm:px-6">
           <span>ResumeStudio · ATS-Friendly Resume Builder</span>
-
-      <footer className="no-print border-t border-white/10 bg-slate-950">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-5 text-xs text-slate-400 sm:px-6">
-          <span>AI-Powered Resume Generator · ATS-Friendly Builder</span>
-
           <span>
             Always review AI-generated content for accuracy before submitting.
           </span>
@@ -515,11 +473,7 @@ function ResumeAppShell() {
         <button
           type="button"
           onClick={() => setChatOpen(true)}
-
           className="no-print fixed bottom-5 right-5 z-40 inline-flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-xl border border-primary-brown/10 bg-white px-4 py-2.5 text-xs font-semibold text-primary-brown shadow-lg shadow-primary-brown/10 transition-transform hover:scale-[1.02] hover:border-sky-600/50"
-
-          className="no-print fixed bottom-5 right-5 z-40 inline-flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-xl border border-white/10 bg-white px-4 py-2.5 text-xs font-semibold text-slate-900 shadow-lg shadow-[#3B2418]/10 transition-transform hover:scale-[1.02] hover:border-sky-600/50"
-
         >
           <MessageSquare className="h-4 w-4 text-sky-600" />
           AI Assistant
