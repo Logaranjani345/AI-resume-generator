@@ -184,9 +184,9 @@ export function PreviewSection({
   const showSocialLinks = appliedOptions.includeSocialLinks;
 
   return (
-    <div className="space-y-6">
+    <div className="page-enter space-y-6">
       {/* Preview Toolbar */}
-      <div className="no-print flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-6 py-4">
+      <div className="no-print flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-6 py-4 shadow-sm shadow-primary-brown/5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-semibold text-slate-500">
             Template:

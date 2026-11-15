@@ -50,9 +50,9 @@ export function SuggestionsSection({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="page-enter space-y-6">
       {/* Job Description Input Card */}
-      <section className="rounded-xl border border-slate-200 bg-white p-6 md:p-8 space-y-4">
+      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm shadow-primary-brown/5 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="font-display text-xl font-bold text-slate-900">

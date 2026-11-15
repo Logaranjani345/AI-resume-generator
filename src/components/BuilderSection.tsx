@@ -283,9 +283,9 @@ export function BuilderSection({
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="page-enter space-y-6">
       {/* Builder Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-6 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-6 py-4 shadow-sm shadow-primary-brown/5">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <label htmlFor="resume-title" className="sr-only">
             Resume Title
@@ -411,7 +411,7 @@ export function BuilderSection({
       )}
 
       {/* Tab Content */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6 md:p-8">
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm shadow-primary-brown/5 md:p-8">
         {activeTab === 'personal' && (
           <div className="space-y-6">
             <div>
