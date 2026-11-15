@@ -1,61 +1,108 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  User,
-  onAuthStateChanged,
-  signInWithPopup,
-  signOut,
-} from 'firebase/auth';
-import { auth, googleAuthProvider } from '../lib/firebase';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+}
 
 interface AuthContextValue {
-  user: User | null;
+  user: AuthUser | null;
   loading: boolean;
   authError: string | null;
-  signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  createAccount: (email: string, password: string) => Promise<void>;
   signOutUser: () => Promise<void>;
-  getIdToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+async function readResponse(response: Response) {
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Authentication request failed.');
+  }
+  return data;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
-      setUser(nextUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    let active = true;
+
+    const loadCurrentUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me', {
+          credentials: 'same-origin',
+        });
+        const data = await readResponse(response);
+        if (active) {
+          setUser(data.user || null);
+          setAuthError(null);
+        }
+      } catch (error) {
+        if (active) {
+          setAuthError(
+            error instanceof Error ? error.message : 'Unable to load your session.'
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void loadCurrentUser();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const signInWithGoogle = async () => {
+  const authenticate = async (
+    endpoint: '/api/auth/login' | '/api/auth/register',
+    email: string,
+    password: string
+  ) => {
     setAuthError(null);
     try {
-      await signInWithPopup(auth, googleAuthProvider);
-    } catch (error: any) {
-      console.error('Google Sign-In error:', error);
-      setAuthError(
-        error?.message || 'Unable to sign in with Google. Please try again.'
-      );
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await readResponse(response);
+      setUser(data.user);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Authentication request failed.';
+      setAuthError(message);
+      throw new Error(message);
     }
   };
+
+  const signInWithEmail = (email: string, password: string) =>
+    authenticate('/api/auth/login', email, password);
+
+  const createAccount = (email: string, password: string) =>
+    authenticate('/api/auth/register', email, password);
 
   const signOutUser = async () => {
     setAuthError(null);
     try {
-      await signOut(auth);
-    } catch (error: any) {
-      console.error('Sign out error:', error);
-      setAuthError(error?.message || 'Unable to sign out right now.');
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+      });
+      await readResponse(response);
+      setUser(null);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unable to sign out right now.';
+      setAuthError(message);
+      throw new Error(message);
     }
-  };
-
-  const getIdToken = async (): Promise<string | null> => {
-    if (!auth.currentUser) return null;
-    return await auth.currentUser.getIdToken();
   };
 
   return (
@@ -64,9 +111,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         loading,
         authError,
-        signInWithGoogle,
+        signInWithEmail,
+        createAccount,
         signOutUser,
-        getIdToken,
       }}
     >
       {children}
@@ -75,9 +122,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
+  const context = useContext(AuthContext);
+  if (!context) {
     throw new Error('useAuth must be used within AuthProvider');
   }
-  return ctx;
+  return context;
 }

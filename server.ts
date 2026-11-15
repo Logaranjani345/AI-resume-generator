@@ -2,9 +2,10 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { MongoServerError, ObjectId } from 'mongodb';
 import { createServer as createViteServer } from 'vite';
-import { adminAuth } from './src/lib/firebase-admin.ts';
-import { getOrCreateUser } from './src/db/users.ts';
+import { createUserAccount, findUserByEmail } from './src/db/users.ts';
+import { createSession, deleteSession } from './src/db/sessions.ts';
 import {
   createUserResume,
   deleteUserResume,
@@ -16,7 +17,15 @@ import {
   clearUserChatMessages,
   getUserChatMessages,
 } from './src/db/chat.ts';
-import { AuthRequest, requireAuth } from './src/middleware/auth.ts';
+import {
+  AuthRequest,
+  clearSessionCookie,
+  getSessionToken,
+  optionalAuth,
+  requireAuth,
+  setSessionCookie,
+} from './src/middleware/auth.ts';
+import { hashPassword, verifyPassword } from './src/lib/password.ts';
 import {
   analyzeAtsAndResume,
   generateSummaryOrObjective,
@@ -33,20 +42,117 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+function getCredentials(
+  body: unknown
+): { email: string; password: string } | null {
+  if (!body || typeof body !== 'object') return null;
+  const credentials = body as { email?: unknown; password?: unknown };
+  if (
+    typeof credentials.email !== 'string' ||
+    typeof credentials.password !== 'string'
+  ) {
+    return null;
+  }
+
+  const email = credentials.email.trim().toLowerCase();
+  const password = credentials.password;
+  if (
+    email.length > 254 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+    password.length === 0 ||
+    password.length > 128
+  ) {
+    return null;
+  }
+
+  return { email, password };
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json({ limit: '2mb' }));
 
-  // Authenticated Resume CRUD endpoints (Cloud SQL PostgreSQL)
+  app.get('/api/auth/me', optionalAuth, (req: AuthRequest, res) => {
+    res.json({
+      user: req.user
+        ? { id: req.user.id.toHexString(), email: req.user.email }
+        : null,
+    });
+  });
+
+  app.post('/api/auth/register', async (req, res) => {
+    const credentials = getCredentials(req.body);
+    if (!credentials || credentials.password.length < 8) {
+      return res.status(400).json({
+        error: 'Enter a valid email and a password between 8 and 128 characters.',
+      });
+    }
+
+    try {
+      const passwordHash = await hashPassword(credentials.password);
+      const user = await createUserAccount(credentials.email, passwordHash);
+      const token = await createSession(user._id);
+      setSessionCookie(res, token);
+      return res.status(201).json({
+        user: { id: user._id.toHexString(), email: user.email },
+      });
+    } catch (error) {
+      if (error instanceof MongoServerError && error.code === 11000) {
+        return res.status(409).json({
+          error: 'An account with that email already exists.',
+        });
+      }
+      console.error('Account registration failed:', error);
+      return res
+        .status(500)
+        .json({ error: 'Unable to create your account right now.' });
+    }
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
+    const credentials = getCredentials(req.body);
+    if (!credentials) {
+      return res.status(400).json({ error: 'Enter a valid email and password.' });
+    }
+
+    try {
+      const user = await findUserByEmail(credentials.email);
+      const passwordMatches = user
+        ? await verifyPassword(credentials.password, user.passwordHash)
+        : false;
+      if (!user || !passwordMatches) {
+        return res.status(401).json({ error: 'Email or password is incorrect.' });
+      }
+
+      const token = await createSession(user._id);
+      setSessionCookie(res, token);
+      return res.json({
+        user: { id: user._id.toHexString(), email: user.email },
+      });
+    } catch (error) {
+      console.error('Account sign-in failed:', error);
+      return res.status(500).json({ error: 'Unable to sign in right now.' });
+    }
+  });
+
+  app.post('/api/auth/logout', async (req, res) => {
+    const token = getSessionToken(req);
+    try {
+      if (token) await deleteSession(token);
+      clearSessionCookie(res);
+      return res.json({ ok: true });
+    } catch (error) {
+      console.error('Account sign-out failed:', error);
+      return res.status(500).json({ error: 'Unable to sign out right now.' });
+    }
+  });
+
+  // Authenticated Resume CRUD endpoints (MongoDB)
   app.get('/api/resumes', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const dbUser = await getOrCreateUser(
-        req.user!.uid,
-        req.user!.email || ''
-      );
-      const list = await getUserResumes(dbUser.id);
+      const list = await getUserResumes(req.user!.id);
       res.json({ resumes: list });
     } catch (error: any) {
       res.status(500).json({ error: error.message || 'Failed to load resumes' });
@@ -55,12 +161,8 @@ async function startServer() {
 
   app.post('/api/resumes', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const dbUser = await getOrCreateUser(
-        req.user!.uid,
-        req.user!.email || ''
-      );
       const payload = req.body as ResumeData;
-      const created = await createUserResume(dbUser.id, payload);
+      const created = await createUserResume(req.user!.id, payload);
       res.status(201).json({ resume: created });
     } catch (error: any) {
       res.status(500).json({ error: error.message || 'Failed to create resume' });
@@ -69,17 +171,12 @@ async function startServer() {
 
   app.put('/api/resumes/:id', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const resumeId = Number(req.params.id);
-      if (!Number.isInteger(resumeId) || resumeId <= 0) {
+      if (!ObjectId.isValid(req.params.id)) {
         return res.status(400).json({ error: 'Invalid resume ID' });
       }
-      const dbUser = await getOrCreateUser(
-        req.user!.uid,
-        req.user!.email || ''
-      );
       const updated = await updateUserResume(
-        dbUser.id,
-        resumeId,
+        req.user!.id,
+        new ObjectId(req.params.id),
         req.body as ResumeData
       );
       if (!updated) {
@@ -93,15 +190,13 @@ async function startServer() {
 
   app.delete('/api/resumes/:id', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const resumeId = Number(req.params.id);
-      if (!Number.isInteger(resumeId) || resumeId <= 0) {
+      if (!ObjectId.isValid(req.params.id)) {
         return res.status(400).json({ error: 'Invalid resume ID' });
       }
-      const dbUser = await getOrCreateUser(
-        req.user!.uid,
-        req.user!.email || ''
+      const removed = await deleteUserResume(
+        req.user!.id,
+        new ObjectId(req.params.id)
       );
-      const removed = await deleteUserResume(dbUser.id, resumeId);
       if (!removed) {
         return res.status(404).json({ error: 'Resume not found' });
       }
@@ -114,11 +209,7 @@ async function startServer() {
   // Authenticated Chat History endpoints
   app.get('/api/chat', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const dbUser = await getOrCreateUser(
-        req.user!.uid,
-        req.user!.email || ''
-      );
-      const messages = await getUserChatMessages(dbUser.id);
+      const messages = await getUserChatMessages(req.user!.id);
       res.json({ messages });
     } catch (error: any) {
       res.status(500).json({ error: error.message || 'Failed to fetch chat history' });
@@ -127,11 +218,7 @@ async function startServer() {
 
   app.delete('/api/chat', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const dbUser = await getOrCreateUser(
-        req.user!.uid,
-        req.user!.email || ''
-      );
-      await clearUserChatMessages(dbUser.id);
+      await clearUserChatMessages(req.user!.id);
       res.json({ ok: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message || 'Failed to clear chat history' });
@@ -227,8 +314,8 @@ async function startServer() {
     }
   });
 
-  // Server-side Multi-turn Gemini Chatbot endpoint (persists to Cloud SQL when authenticated)
-  app.post('/api/ai/chat', async (req, res) => {
+  // Server-side Multi-turn Gemini Chatbot endpoint (persists when authenticated)
+  app.post('/api/ai/chat', optionalAuth, async (req: AuthRequest, res) => {
     try {
       const { message, persona, history, resumeContext } = req.body || {};
       if (!message || typeof message !== 'string' || !message.trim()) {
@@ -240,26 +327,12 @@ async function startServer() {
           ? persona
           : 'career-coach';
 
-      let dbUserId: number | null = null;
+      const dbUserId = req.user?.id || null;
       let dbHistory: Array<{ role: 'user' | 'model'; content: string }> = [];
 
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        try {
-          const decoded = await adminAuth.verifyIdToken(
-            authHeader.split('Bearer ')[1]
-          );
-          const dbUser = await getOrCreateUser(
-            decoded.uid,
-            decoded.email || ''
-          );
-          dbUserId = dbUser.id;
-          const saved = await getUserChatMessages(dbUser.id);
-          dbHistory = saved.map((m) => ({ role: m.role, content: m.content }));
-        } catch {
-          // If token is invalid/expired, reject rather than silently dropping auth
-          return res.status(401).json({ error: 'Unauthorized: Invalid session token' });
-        }
+      if (dbUserId) {
+        const saved = await getUserChatMessages(dbUserId);
+        dbHistory = saved.map((m) => ({ role: m.role, content: m.content }));
       }
 
       const effectiveHistory =

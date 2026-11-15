@@ -1,67 +1,65 @@
-import { asc, eq } from 'drizzle-orm';
-import { db } from './index.ts';
-import { chatMessages } from './schema.ts';
+import { ObjectId } from 'mongodb';
+import type { Collection, Document } from 'mongodb';
+import { getDatabase } from './index.ts';
 import type { ChatMessageItem, ChatPersonaId } from '../types/resume.ts';
 
-export async function getUserChatMessages(
-  userId: number
-): Promise<ChatMessageItem[]> {
-  try {
-    const rows = await db
-      .select()
-      .from(chatMessages)
-      .where(eq(chatMessages.userId, userId))
-      .orderBy(asc(chatMessages.id));
+interface ChatMessageDocument extends Document {
+  _id: ObjectId;
+  userId: ObjectId;
+  role: 'user' | 'model';
+  persona: ChatPersonaId;
+  modelUsed: string;
+  content: string;
+  createdAt: Date;
+}
 
-    return rows.map((row) => ({
-      id: row.id,
-      role: row.role === 'model' ? 'model' : 'user',
-      persona: (row.persona as ChatPersonaId) || 'career-coach',
-      modelUsed: row.modelUsed,
-      content: row.content,
-      createdAt: row.createdAt ? row.createdAt.toISOString() : undefined,
-    }));
-  } catch (error) {
-    console.error('Database error in getUserChatMessages:', error);
-    throw new Error('Unable to load conversation history.', { cause: error });
-  }
+function chatCollection(): Promise<Collection<ChatMessageDocument>> {
+  return getDatabase().then((database) =>
+    database.collection<ChatMessageDocument>('chatMessages')
+  );
+}
+
+function toChatMessage(document: ChatMessageDocument): ChatMessageItem {
+  return {
+    id: document._id.toHexString(),
+    role: document.role,
+    persona: document.persona,
+    modelUsed: document.modelUsed,
+    content: document.content,
+    createdAt: document.createdAt.toISOString(),
+  };
+}
+
+export async function getUserChatMessages(
+  userId: ObjectId
+): Promise<ChatMessageItem[]> {
+  const messages = await chatCollection();
+  const documents = await messages
+    .find({ userId })
+    .sort({ createdAt: 1, _id: 1 })
+    .toArray();
+  return documents.map(toChatMessage);
 }
 
 export async function appendChatMessage(
-  userId: number,
+  userId: ObjectId,
   message: Omit<ChatMessageItem, 'id' | 'createdAt'>
 ): Promise<ChatMessageItem> {
-  try {
-    const [inserted] = await db
-      .insert(chatMessages)
-      .values({
-        userId,
-        role: message.role,
-        persona: message.persona,
-        modelUsed: message.modelUsed,
-        content: message.content,
-      })
-      .returning();
-
-    return {
-      id: inserted.id,
-      role: inserted.role === 'model' ? 'model' : 'user',
-      persona: (inserted.persona as ChatPersonaId) || 'career-coach',
-      modelUsed: inserted.modelUsed,
-      content: inserted.content,
-      createdAt: inserted.createdAt ? inserted.createdAt.toISOString() : undefined,
-    };
-  } catch (error) {
-    console.error('Database error in appendChatMessage:', error);
-    throw new Error('Unable to save chat message.', { cause: error });
-  }
+  const messages = await chatCollection();
+  const document: ChatMessageDocument = {
+    _id: new ObjectId(),
+    userId,
+    role: message.role,
+    persona: message.persona,
+    modelUsed: message.modelUsed,
+    content: message.content,
+    createdAt: new Date(),
+  };
+  await messages.insertOne(document);
+  return toChatMessage(document);
 }
 
-export async function clearUserChatMessages(userId: number): Promise<void> {
-  try {
-    await db.delete(chatMessages).where(eq(chatMessages.userId, userId));
-  } catch (error) {
-    console.error('Database error in clearUserChatMessages:', error);
-    throw new Error('Unable to clear chat history.', { cause: error });
-  }
+export async function clearUserChatMessages(userId: ObjectId): Promise<void> {
+  const messages = await chatCollection();
+  await messages.deleteMany({ userId });
 }

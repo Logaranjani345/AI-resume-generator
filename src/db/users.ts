@@ -1,25 +1,45 @@
-import { db } from './index.ts';
-import { users } from './schema.ts';
+import { ObjectId } from 'mongodb';
+import type { Collection, Document } from 'mongodb';
+import { getDatabase } from './index.ts';
 
-export async function getOrCreateUser(uid: string, email: string) {
-  try {
-    const result = await db
-      .insert(users)
-      .values({
-        uid,
-        email,
-      })
-      .onConflictDoUpdate({
-        target: users.uid,
-        set: {
-          email,
-        },
-      })
-      .returning();
+export interface UserDocument extends Document {
+  _id: ObjectId;
+  email: string;
+  passwordHash: string;
+  createdAt: Date;
+}
 
-    return result[0];
-  } catch (error) {
-    console.error('Database error in getOrCreateUser:', error);
-    throw new Error('Failed to synchronize user account.', { cause: error });
-  }
+function usersCollection(): Promise<Collection<UserDocument>> {
+  return getDatabase().then((database) =>
+    database.collection<UserDocument>('users')
+  );
+}
+
+export async function findUserByEmail(
+  email: string
+): Promise<UserDocument | null> {
+  const users = await usersCollection();
+  return users.findOne({ email });
+}
+
+export async function findUserById(
+  id: ObjectId
+): Promise<UserDocument | null> {
+  const users = await usersCollection();
+  return users.findOne({ _id: id });
+}
+
+export async function createUserAccount(
+  email: string,
+  passwordHash: string
+): Promise<UserDocument> {
+  const users = await usersCollection();
+  const user: UserDocument = {
+    _id: new ObjectId(),
+    email,
+    passwordHash,
+    createdAt: new Date(),
+  };
+  await users.insertOne(user);
+  return user;
 }

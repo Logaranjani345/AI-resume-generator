@@ -1,26 +1,146 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary-brown: #3B2418;
+  --color-background-cream: #F2E8DA;
+  --color-accent-blue: #8EC5FF;
+  --color-secondary-cream: #E9DDCE;
+  --color-dark-text: #2B211C;
+
+  --color-charcoal-gray: #3B2418;
+  --color-charcoal: #3B2418;
+  --color-silver: #E9DDCE;
+  --color-golden-yellow: #8EC5FF;
+  --color-gold: #8EC5FF;
+  --color-white: #FFFFFF;
+
+  --color-sky-50: #E9DDCE;
+  --color-sky-100: #E9DDCE;
+  --color-sky-200: #8EC5FF;
+  --color-sky-300: #8EC5FF;
+  --color-sky-400: #8EC5FF;
+  --color-sky-500: #8EC5FF;
+  --color-sky-600: #8EC5FF;
+  --color-sky-700: #8EC5FF;
+  --color-sky-800: #3B2418;
+  --color-sky-900: #3B2418;
+  --color-sky-950: #2B211C;
+
+  --color-slate-50: #F2E8DA;
+  --color-slate-100: #E9DDCE;
+  --color-slate-200: #E9DDCE;
+  --color-slate-300: #E9DDCE;
+  --color-slate-400: #3B2418;
+  --color-slate-500: #3B2418;
+  --color-slate-600: #3B2418;
+  --color-slate-700: #3B2418;
+  --color-slate-800: #2B211C;
+  --color-slate-900: #3B2418;
+  --color-slate-950: #3B2418;
+
+  --color-red-50: #E9DDCE;
+  --color-red-100: #E9DDCE;
+  --color-red-200: #E9DDCE;
+  --color-red-300: #E9DDCE;
+  --color-red-400: #3B2418;
+  --color-red-500: #3B2418;
+  --color-red-600: #3B2418;
+  --color-red-700: #3B2418;
+  --color-red-800: #3B2418;
+  --color-red-900: #2B211C;
+  --color-red-950: #2B211C;
+
+  --color-emerald-600: #3B2418;
+  --color-emerald-700: #3B2418;
+  --color-amber-700: #3B2418;
+
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
 @layer base {
   :root {
-    --font-display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-    --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    --charcoal-gray: #3B2418;
+    --silver: #E9DDCE;
+    --golden-yellow: #8EC5FF;
+    --white: #FFFFFF;
+    --color-primary: #8EC5FF;
+    --color-primary-hover: #8EC5FF;
+    --color-primary-text: #3B2418;
+    --color-bg-app: #F2E8DA;
+    --color-bg-card: #FFFFFF;
+    --color-bg-muted: #E9DDCE;
+    --color-text-main: #2B211C;
+    --color-text-muted: #3B2418;
+    --color-border-main: #E9DDCE;
+    --color-border-subtle: #E9DDCE;
   }
 
   html {
+    scroll-behavior: smooth;
     font-family: var(--font-sans);
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: #F2E8DA;
+    color: #2B211C;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, .font-display {
+  body {
+    min-width: 320px;
+    background-color: #F2E8DA;
+    color: #2B211C;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
     font-family: var(--font-display);
+    color: #3B2418;
   }
 
   .font-mono {
     font-family: var(--font-mono);
+  }
+
+  ::selection {
+    background-color: #8EC5FF;
+    color: #3B2418;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: ease;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #8EC5FF;
+    outline-offset: 2px;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    background-color: #FFFFFF;
+    border-color: #E9DDCE;
+    color: #2B211C;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #3B2418;
+    opacity: 0.58;
   }
 }
 
@@ -28,8 +148,106 @@
   font-variant-numeric: tabular-nums;
 }
 
+.text-white,
+.text-silver,
+.text-sky-400,
+.text-sky-500,
+.text-sky-600,
+.text-sky-700,
+.text-sky-800,
+.text-sky-900,
+.text-sky-950,
+.text-red-600,
+.text-red-700,
+.text-red-800,
+.text-emerald-600,
+.text-emerald-700,
+.text-amber-700 {
+  color: #3B2418 !important;
+}
+
+.bg-slate-950\/95 {
+  background-color: rgb(242 232 218 / 95%) !important;
+}
+
+.bg-slate-950 {
+  background-color: #F2E8DA !important;
+}
+
+.bg-slate-900 {
+  background-color: #FFFFFF !important;
+}
+
+.bg-slate-900\/50,
+.bg-slate-900\/40 {
+  background-color: rgb(59 36 24 / 42%) !important;
+}
+
+.bg-slate-900\/80 {
+  background-color: #FFFFFF !important;
+}
+
+.bg-slate-800,
+.bg-slate-700 {
+  background-color: #E9DDCE !important;
+}
+
+.resume-mockup,
+.resume-mockup *,
+.resume-print-sheet,
+.resume-print-sheet * {
+  color: #2B211C !important;
+}
+
+.resume-mockup,
+.resume-print-sheet {
+  background-color: #FFFFFF !important;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(142, 197, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(142, 197, 255, 0.12) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(90deg, transparent, black 45%, black);
+}
+
+.hero-float {
+  animation: hero-float 7s ease-in-out infinite;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 360ms ease-out both;
+}
+
+@keyframes hero-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

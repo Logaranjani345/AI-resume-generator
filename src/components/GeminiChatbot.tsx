@@ -46,7 +46,7 @@ export function GeminiChatbot({
   onClose,
   resume,
 }: GeminiChatbotProps) {
-  const { user, getIdToken } = useAuth();
+  const { user } = useAuth();
   const [persona, setPersona] = useState<ChatPersonaId>('career-coach');
   const [includeResume, setIncludeResume] = useState(true);
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
@@ -60,23 +60,32 @@ export function GeminiChatbot({
   useEffect(() => {
     let active = true;
     const loadHistory = async () => {
+      setMessages([]);
+      setError(null);
       if (!user) {
+        setLoadingHistory(false);
         return;
       }
       setLoadingHistory(true);
       try {
-        const token = await getIdToken();
-        if (!token) return;
         const res = await fetch('/api/chat', {
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'same-origin',
         });
-        if (!res.ok) return;
         const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load conversation history.');
+        }
         if (active && Array.isArray(data.messages)) {
           setMessages(data.messages);
         }
-      } catch {
-        // Keep silent if history fails to fetch initially
+      } catch (loadError) {
+        if (active) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : 'Unable to load conversation history.'
+          );
+        }
       } finally {
         if (active) setLoadingHistory(false);
       }
@@ -85,7 +94,7 @@ export function GeminiChatbot({
     return () => {
       active = false;
     };
-  }, [user, getIdToken]);
+  }, [user]);
 
   useEffect(() => {
     if (isOpen) {
@@ -118,16 +127,11 @@ export function GeminiChatbot({
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
-      if (user) {
-        const token = await getIdToken();
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
-      }
 
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers,
+        credentials: 'same-origin',
         body: JSON.stringify({
           message: trimmed,
           persona,
@@ -164,15 +168,21 @@ export function GeminiChatbot({
     setError(null);
     if (user) {
       try {
-        const token = await getIdToken();
-        if (token) {
-          await fetch('/api/chat', {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-          });
+        const response = await fetch('/api/chat', {
+          method: 'DELETE',
+          credentials: 'same-origin',
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to clear conversation history.');
         }
-      } catch {
-        // Ignore clear error
+      } catch (clearError) {
+        setError(
+          clearError instanceof Error
+            ? clearError.message
+            : 'Unable to clear conversation history.'
+        );
+        return;
       }
     }
     setMessages([]);
@@ -234,7 +244,7 @@ export function GeminiChatbot({
                 title={opt.description}
                 className={`rounded-md px-2 py-1.5 text-xs font-medium transition-colors whitespace-nowrap truncate ${
                   active
-                    ? 'bg-white text-slate-900 shadow-xs'
+                    ? 'bg-sky-600 text-slate-900 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -277,7 +287,7 @@ export function GeminiChatbot({
                   key={starter}
                   type="button"
                   onClick={() => setInput(starter)}
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/40"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50"
                 >
                   {starter}
                 </button>
@@ -341,7 +351,7 @@ export function GeminiChatbot({
               }
             }}
             placeholder="Ask for bullet rewrites, ATS feedback, or interview prep..."
-            className="flex-1 resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:bg-white focus:outline-none"
+            className="flex-1 resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-sky-500 focus:bg-white focus:outline-none"
           />
           <button
             type="submit"
